@@ -1,0 +1,652 @@
+---
+title: ""
+author: ""
+format: 
+  revealjs:
+    theme: dark
+    slide-number: true
+    self-contained: true
+editor: visual
+bibliography: book.bib
+---
+
+# Forecast Infrastructure {background-color="#33431e"}
+
+Jasper Slingsby
+
+## {background-color="#33431e"}
+
+![](img/Dietze2017title.png){fig-align="center"}
+
+::: columns
+::: {.column width="50%"}
+
+![](img/iterative.png){fig-align="left"}
+
+:::
+
+::: {.column width="50%"}
+
+![](img/iteration.png){fig-align="right"}
+:::
+:::
+
+## What do we need to be able to iterate? {background-color="#33431e"}
+
+
+Especially for an operational forecast system...
+
+<br>
+
+::: {.incremental}
+-   A _**reproducible workflow**_ that can be run on new data
+
+<br>
+
+-   _**Automation**_ of the workflow, to allow it to run without human intervention
+:::
+
+
+## Reproducible Research {background-color="#33431e"}
+
+<br>
+
+-   Makes use of modern software tools to share data, code, etc to allow others to reproduce the same result as the original study, thus ***making all analyses open and transparent**.*
+
+    -   This is ***central to scientific progress!!!***
+
+<br>
+
+-   BONUS: working reproducibly ***facilitates automated workflows***, which is useful for applications like iterative near-term ecological forecasting!
+
+<br>
+
+
+## Reproducible Research {background-color="#33431e"}
+
+I'm going to try to keep this brief...
+
+<br>
+
+For more on the need for and benefits of working reproducibly and more detailed coverage of things like the data life cycle, see [https://www.ecologi.st/data-management/](https://www.ecologi.st/data-management/)
+
+<br>
+
+For more info on available tools etc (especially w.r.t. forecasting) see [https://projects.ecoforecast.org/taskviews/reproducible-forecasting-workflows.html](https://projects.ecoforecast.org/taskviews/reproducible-forecasting-workflows.html)
+
+
+## Why work reproducibly? {.smaller background-color="#33431e"}
+
+::: columns
+::: {.column width="50%"}
+
+![Let's start being more specific about our miracles... Cartoon © Sidney Harris. Used with permission [ScienceCartoonsPlus.com](www.ScienceCartoonsPlus.com)](img/miracle.jpg){width=100%}
+
+:::
+
+::: {.column width="50%"}
+
+> "*Five selfish reasons to work reproducibly*" [@Markowetz2015]
+
+1.  ***Transparent and open*** - find mistakes etc
+2.  ***Easier to write papers*** - faster updates
+3.  ***Helps the review process*** - can actually see (and do!) what you did
+4.  ***Enables continuity*** of research by simplifying handover
+5.  ***Reputation*** - shows integrity and you gain credit where your work is reused
+
+:::
+:::
+
+## Reproducible Scientific Workflows {.smaller background-color="#33431e"}
+
+!['Data Pipeline' from [xkcd.com/2054](https://xkcd.com/2054), used under a [CC-BY-NC 2.5 license](https://creativecommons.org/licenses/by-nc/2.5/).](img/xkcd_data_pipeline_2x.png)
+
+<br>
+
+Working reproducibly requires careful planning and documentation of each step in your scientific workflow from *planning* your data collection to *sharing* your results.
+
+
+## Barriers to working reproducibly {.smaller background-color="#33431e"}
+
+> "*A Beginner's Guide to Conducting Reproducible Research*" [@Alston2021]:
+
+<br>
+
+1. ***Complexity*** - There's a learning curve in getting to know the tools
+
+2. ***Technological change*** - Hardware and software change over time, making it difficult to rerun old analyses
+
+3. ***Human error*** - Simple mistakes or poor documentation can easily make a study irreproducible
+
+4. ***Intellectual property rights*** - Self-interest can lead to hesitation to share data and code
+    
+Most of these are being addressed by the growing culture of reproducible research, with more and more tools available to help researchers work reproducibly.
+
+
+## Reproducible Scientific Workflows {background-color="#33431e"}
+
+Entail overlapping/intertwined components, namely:
+
+1.  Data management
+2.  File and folder management
+3.  Coding and code management (data manipulation and analyses)
+4.  Computing environment and software
+5.  Sharing of the data, metadata, code, publications and any other relevant materials
+
+## 1. Data management {.smaller background-color="#33431e"}
+
+:::columns
+:::{.column width="50%"}
+
+```{r datalifecycle, echo=FALSE, fig.cap = "The Data Life Cycle, adapted from https://www.dataone.org/", fig.align = 'center', out.width="100%"}
+#| fig-width: 10
+#| fig-height: 10
+#| echo: false
+
+# load library
+library(ggplot2)
+
+# Create test data.
+data <- data.frame(
+  category=c("1.Plan", "2.Collect", "3.Assure", "4.Describe", "5.Preserve", "6.Discover", "7.Integrate", "8.Analyze"),
+  count=rep(12.5, 8)
+)
+ 
+# Compute percentages
+data$fraction <- data$count / sum(data$count)
+
+# Compute the cumulative percentages (top of each rectangle)
+data$ymax <- cumsum(data$fraction)
+
+# Compute the bottom of each rectangle
+data$ymin <- c(0, head(data$ymax, n=-1))
+
+# Compute label position
+data$labelPosition <- (data$ymax + data$ymin) / 2
+
+# Compute a good label
+data$label <- paste0(data$category, "\n value: ", data$count)
+
+# Make the plot
+ggplot(data, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=category)) +
+  geom_rect() +
+  geom_text(x=3.5, aes(y=labelPosition, label=category), size = 8) + #, color=category)) + # x here controls label position (inner / outer)
+  scale_fill_brewer(palette="Blues") +
+#  scale_color_brewer(palette="Blues", direction = -1) +
+  coord_polar(theta="y") +
+  xlim(c(2, 4.5)) +
+  theme_void() +
+  theme(legend.position = "none")
+```
+
+:::
+
+:::{.column width="50%"}
+
+Forecasting requirements:
+
+- Consistent data format and documentation (metadata)
+- Quality assurance and quality control (QA/QC)
+  - To allow quantification of uncertainty
+- Low latency
+- Useful if it can be called programmatically from an API (Application Programming Interface) or similar
+
+:::
+:::
+
+
+## Ready to Integrate & Analyse? {.smaller background-color="#c2c190"}
+
+"The fun bit", but again, there are many things to bear in mind and keep track of so that your analysis is repeatable. This is largely covered by the sections on *Coding and code management* and *Computing environment and software* below
+
+![Artwork \@allison_horst](img/tidydata_5.jpg)
+
+## 2. File and folder management {.smaller background-color="#33431e"}
+
+::::: columns
+::: {.column width="45%"}
+!['Documents' from [xkcd.com/1459](https://xkcd.com/1459), used under a [CC-BY-NC 2.5 license](https://creativecommons.org/licenses/by-nc/2.5/).](img/documentnaming.png)
+:::
+
+::: {.column width="55%"}
+<br>
+
+Project files and folders can get unwieldy fast and really bog you down!
+
+<br>
+
+The main considerations are:
+
+-   defining a simple, common, intuitive folder structure
+-   using informative file names
+-   version control where possible
+    -   e.g. GitHub
+:::
+:::::
+
+##  {.smaller background-color="#c2c190"}
+
+::::::: columns
+::: {.column width="46%"}
+### Folders
+
+Most projects have similar requirements
+
+Here's how I usually manage my folders:
+
+![](img/gitrepofolders.png) <br>
+
+-   "code"contains code for analyses
+-   "data" often has separate "raw" and "processed" (or "clean") folders
+    -   Large files (e.g. GIS) may be stored elsewhere
+-   "output" contains figures and tables
+:::
+
+::: {.column width="4%"}
+:::
+
+:::: {.column width="50%"}
+::: fragment
+### Names should be
+
+-   machine readable
+    -   avoid spaces and funny punctuation
+    -   support searching and splitting, e.g. "data_raw.csv", "data_clean.csv" can be searched by keywords and split into fields by "\_"
+-   human readable
+    -   contents self evident from the name
+-   support sorting
+    -   numeric or character prefixes separate files by component or step
+    -   folder structure helps here too
+:::
+::::
+:::::::
+
+## 3. Coding and code management {.smaller background-color="#33431e"}
+
+::::::: columns
+
+::: {.column width="50%"}
+![Artwork \@allison_horst](img/R_allisonhorst.png)
+:::
+
+::: {.column width="50%"}
+
+"Point-and-click" software may seem easier, but you'll regret it in the long run... e.g. When you have to rerun your analysis?
+
+- Code is essential for reproducibility and automation.
+- While many softwares now allow you to save what you did as a script or "macro", but they are usually not open source and not easily shared or reused.
+
+R, Python, etc are open source and allow you to do almost any analysis in one workflow - even calling other softwares.
+
+:::
+
+:::::::
+
+## 3. Coding and code management {.smaller background-color="#33431e"}
+
+<br>
+
+### Coding rules
+
+Coding is communication. Messy code is bad communication. Bad communication hampers collaboration and makes it easier to make mistakes...
+
+<br>
+
+::: fragment
+### Version control
+
+[Streamline, collaborate, reuse, contribute, and fail safely...](https://www.openscapes.org/blog/2022/05/27/github-illustrated-series/)
+:::
+
+## Some coding rules {.smaller background-color="#c2c190"}
+
+It'seasytowritemessyindecipherablecode!!! - ***Write code for people, not computers!!!***
+
+<br>
+
+::: incremental
+Check out the [Tidyverse style guide](https://style.tidyverse.org/index.html) for R-specific guidance, but here are some basics:
+
+-   use consistent, meaningful and distinct **names** for variables and functions
+-   use consistent code and **formatting style** - indents, spaces, line-breaks, etc
+-   **modularize code** into manageable steps/chunks
+    -   or separate scripts that can be called in order from a master script or Makefile
+    -   write **functions** rather than repeating the same code
+-   use **commenting** to explain what you're doing at each step or in each function
+    -   "notebooks" like RMarkdown, Quarto, Jupyter or Sweave allow embedded code, simplifying documentation, master/Makefiles, etc and can be used to write manuscripts, presentations or websites (e.g. all my teaching materials)
+-   **check for mistakes** at every step!!! Do the outputs make sense?
+:::
+
+## Some coding rules continued... {.smaller background-color="#c2c190"}
+
+-   start with a "**recipe**"
+    -   outline the steps/modules before you start coding to keep you on track
+    -   e.g. a common recipe in R (using commented headers):
+
+```{r, echo = T}
+#Header indicating purpose, author, date, version etc
+
+#Define settings and load required libraries
+
+#Read in data
+
+#Wrangle/reformat/clean/summarize data as required
+
+#Run analyses (often multiple steps)
+
+#Wrangle/reformat/summarize analysis outputs for visualization
+
+#Visualize outputs as figures or tables
+```
+
+-   avoid proprietary formats! i.e. use **open source** scripting languages and file formats
+-   use version control!!!
+
+## Version control {.smaller background-color="#c2c190"}
+
+Version control tools can be challenging , but also hugely simplify your workflow!
+
+The advantages of version control[^3]:
+
+:::: columns
+::: {.column width="15%"}
+
+![](img/octicons-mark-github.svg)
+
+:::
+
+::: {.column width="85%"}
+
+::: incremental
+-   They generally help project management, especially **collaborations**
+-   They allow **easy code sharing** with collaborators or the public at large - through `repositories` ("repos") or `gists` (code snippets)
+-   The **system is online**, but you **can also work offline** by `cloning` the repo to your local PC. You can "`push` to" or "`pull` from" the online repo to keep versions in sync
+-   **Changes are tracked and reversible** through `commits`
+    -   Changes must be `commit`ed with a `commit message` - creating a recoverable `version` that can be `compared` or `reverted`
+    -   **Version control** magically frees you from duplicated files!
+
+:::
+
+:::
+
+::::
+
+[^3]: `Terminology` for Git and [GitHub](https://github.com/), but most have similar functions.
+
+
+## Version control continued... {.smaller background-color="#c2c190"}
+
+-   Users can easily **adapt or build on each others' code** by `forking` repos and working on their own `branch`.
+    -   This allows you to **repeat/replicate analyses** or even build websites (like this one!)
+
+::: incremental
+-   Collaborators can **propose changes** via `pull requests`
+    -   Repo `owners` can **accept and integrate changes seamlessly** by `review` and `merge` the *forked branch* back to the `main` branch
+    -   Comments associated with `commit` or `pull request`s provide a **written record of changes** and track the user, date, time, etc - all of which and are useful tracking mistakes and `blaming` when things go wrong
+-   You can `assign`, log and track `issues` and `feature requests`
+:::
+
+## Version control - example workflow {.smaller background-color="#c2c190"}
+
+![](img/GitDiagram.drawio.png)
+
+## Version control - example workflow {.smaller background-color="#c2c190"}
+
+![](img/git_paircoding.png)
+
+Interestingly, since all that's tracked are the *commits*, whereby versions are named (the nodes in the image). All that the online Git repo records is this figure below. The black is the the OWNER's *main* branch and the blue is the COLLABORATOR's *fork*.
+
+## Version control in pretty pictures {.smaller background-color="#c2c190"}
+
+![Artwork by \@allison_horst [CC-BY-4.0](https://github.com/allisonhorst/stats-illustrations/blob/main/license)](img/git_commit.png)
+
+## Version control in pretty pictures {.smaller background-color="#c2c190"}
+
+![Artwork by \@allison_horst [CC-BY-4.0](https://github.com/allisonhorst/stats-illustrations/blob/main/license)](img/git_navigate.png)
+
+## 4. Computing environment {background-color="#33431e"}
+
+<br>
+
+Sharing your code and data is not enough to maintain reproducibility...
+
+***Software and hardware change between users, with upgrades, versions or user community preferences!***
+
+-   You'll all know MicroSoft Excel, but have you heard of Quattro Pro or Lotus that were the preferred spreadsheet software of yesteryear?
+
+## The lazy solution {.smaller background-color="#c2c190"}
+
+You can document the hardware and versions of software used so that others can recreate that computing environment if needed.
+
+- In R, you can simply run the `sessionInfo()` function, giving details below
+- This just makes it someone else's problem to recreate your computing environment (usually you!), which is not ideal...
+
+```{r}
+sessionInfo()
+```
+
+## A better solution {.smaller background-color="#c2c190"}
+
+If your entire workflow is within R, you can use the [renv](https://rstudio.github.io/renv/) package to manage your R environment.
+
+:::: columns
+::: {.column width="15%"}
+
+![](img/renv.svg)
+
+:::
+
+::: {.column width="85%"}
+
+`renv` is essentially a package manager.
+
+It creates a **snapshot** of your R environment, including all packages and their versions, so that anyone can recreate the same environment by running `renv::restore()`
+
+<br>
+
+Disadvantages are that it doesn't manage for:
+
+- Different versions of R
+- Different operating systems
+- Software outside of R (e.g. JAGS, Stan, Python, GitHub etc)
+
+:::
+
+::::
+
+## The best solution? {.smaller background-color="#c2c190"}
+
+Use **containers** like those provided by software like [docker](https://www.docker.com/) or [singularity](https://sylabs.io/singularity/).
+
+:::: columns
+::: {.column width="15%"}
+
+![](img/docker.png)
+
+<br>
+
+<br>
+
+<br>
+
+![](img/rocker.png)
+:::
+
+::: {.column width="85%"}
+
+Containers provide "images" of contained, lightweight computing environments that you can package with your software/workflow to set up [virtual machines](https://en.wikipedia.org/wiki/Virtual_machine) with all the necessary software and settings etc.
+
+You set your container up to have everything you need to run your workflow (and nothing extra), so anyone can download (or clone) your container, code and data and run your analyses perfectly every time.
+
+Containers are usually based on Linux, because other operating systems are not free.
+
+The [Rocker project](https://www.rocker-project.org/) provides a set of Docker images for R and RStudio, which are widely used in the R community.
+
+
+:::
+
+::::
+
+
+## 5. Sharing data, code, publication etc {.smaller background-color="#33431e"}
+
+:::::: columns
+::: {.column width="50%"}
+
+This is covered by data management, but suffice to say there's no point working reproducibly if you're not going to share all the components necessary to complete your workflow...
+
+<br>
+
+Another key component here is that ideally all your data, code, publication etc are shared *Open Access*
+
+-   not stuck behind some paywall!
+-   not in a proprietary format or requiring proprietary software
+-   shared with a permissive use license
+    -   e.g. [Creative Commons](https://creativecommons.org/licenses/)
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="45%"}
+![A 3-step, 10-point checklist to guide researchers toward greater reproducibility [@Alston2021].](img/alstonreproducibility.jpg)
+:::
+::::::
+
+::::
+
+## Automation? {.smaller background-color="#33431e"}
+
+The key to iterating your workflow, especially for forecasting.
+
+Many options!
+
+::: incremental
+-   **Makefiles** - a simple text file that defines how to run your code, e.g. in R, Python, etc
+-   **RMarkdown** or **Quarto** - allow you to write code and text in the same document, which can be run to produce a report, website, etc
+-   **GitHub Actions** - allows you to automate workflows in GitHub, e.g. running tests, building documentation, etc
+-   **R** - R has many packages for automating workflows, e.g. [`targets`](https://docs.ropensci.org/targets/)
+:::
+
+## An example {.smaller background-color="#33431e"}
+
+![](img/emma_logo.jpg)
+
+The project aims to develop a near-real-time satellite change detection system for the Fynbos Biome using an ecological forecasting approach ([www.emma.eco](www.emma.eco)).
+
+## An example {.smaller background-color="#33431e"}
+
+![](img/emma_nasa.png){fig-align="center"}
+
+## EMMA Workflow {.smaller background-color="#c2c190"}
+
+:::::: columns
+
+::: {.column width="30%"}
+
+![](img/emma_workflow.png)
+
+:::
+
+::: {.column width="70%"}
+
+<br>
+
+The workflow is designed to be run on a weekly basis, with new data ingested and processed automatically.
+
+There are several steps, each of which is run automatically:
+
+- **Data ingest** - new data is downloaded from various APIs
+- **Data processing** - to extract the relevant info and reformat for analysis
+- **Data analysis** - the data is analysed to detect changes in the environment
+- **Data visualization and sharing** - via a Quarto website run from a GitHub repository
+
+:::
+
+::::::
+
+## EMMA Workflow {.smaller background-color="#c2c190"}
+
+:::::: columns
+
+::: {.column width="12%"}
+
+![](img/quarto.png)
+
+![](img/Rlogo.png){width="80%"}
+![](img/targets_logo.png){width="80%"}
+
+![](img/github_actions.webp){width="80%"}
+![](img/docker.png){width="80%"}
+
+![](img/octicons-mark-github.svg){width="80%"}
+
+:::
+
+::: {.column width="85%"}
+Outputs a `Quarto` website, automatically built from a GitHub repository.
+
+<br>
+
+Processing and analysis done in R. Intermediate and final outputs stored as GitHub releases or in GitHub Large File Storage.
+
+<br>
+
+R workflow managed by the `targets` package 
+
+<br>
+
+`GitHub Actions` used to automate and run the workflow
+
+<br>
+
+`Docker` container sets up the computing environment
+
+<br>
+
+All code, data, metadata, etc are shared on `GitHub`
+
+:::
+
+::::::
+
+
+## EMMA `targets` Workflow {.smaller background-color="#c2c190"}
+
+
+
+:::::: columns
+
+::: {.column width="40%"}
+
+![Example `targets` workflow from https://wlandau.github.io/targets-tutorial/#8](img/targets_pipeline_graph.png){width="100%"}
+
+![EMMA targets workflow](img/emma_targets.png)
+
+:::
+
+::: {.column width="60%"}
+
+`targets` is an R package that allows you to define a workflow as a series of steps, each of which can be run automatically.
+
+<br>
+
+The package identifies which steps are out of date and runs them and their dependencies, but ignores unaffected steps, saving computation.
+
+<br>
+
+In EMMA, the workflow is defined as a series of R scripts, which is run automatically by GitHub Actions on a weekly basis, triggered by a GitHub runner.
+
+:::
+
+::::::
+
+## Unit testing {background-color="#33431e"}
+
+-   A key component of automation is **unit testing** 
+    - testing each component of your code to ensure it works as expected
+-   This is especially important for forecasting, where you need to ensure that your code runs correctly on new data
+-   R has many packages for unit testing, e.g. [`testthat`](https://testthat.r-lib.org/) and [`RUnit`](https://cran.r-project.org/web/packages/RUnit/index.html)
+
+
+## References {.smaller background-color="#33431e"}
