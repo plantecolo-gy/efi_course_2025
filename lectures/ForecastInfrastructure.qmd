@@ -183,7 +183,7 @@ ggplot(data, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=category)) +
 
 :::{.column width="50%"}
 
-Forecasting requirements:
+Specific forecasting requirements:
 
 - Consistent data format and documentation (metadata)
 - Quality assurance and quality control (QA/QC)
@@ -635,7 +635,7 @@ The package identifies which steps are out of date and runs them and their depen
 
 <br>
 
-In EMMA, the workflow is defined as a series of R scripts, which is run automatically by GitHub Actions on a weekly basis, triggered by a GitHub runner.
+In EMMA, the workflow is defined as a series of R scripts, which is run automatically by GitHub Actions on a weekly basis, triggered by a GitHub runner. `targets` keeps track and controls which steps have been run and which need to be rerun depending on new data inputs, etc.
 
 :::
 
@@ -645,7 +645,7 @@ In EMMA, the workflow is defined as a series of R scripts, which is run automati
 
 -   A key component of automation is **unit testing** 
     - testing each component of your code to ensure it works as expected
--   This is especially important for forecasting, where you need to ensure that your code runs correctly on new data
+-   This is a part of general coding and code management, but is especially important for forecasting, where you need to ensure that your code runs correctly on new data
 -   R has many packages for unit testing, e.g. [`testthat`](https://testthat.r-lib.org/) and [`RUnit`](https://cran.r-project.org/web/packages/RUnit/index.html)
 
 

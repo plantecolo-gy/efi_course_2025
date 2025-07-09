@@ -434,6 +434,7 @@ In this dummy model the forecast is almost exactly the same as the previous time
 :::
 ::::
 
+:::{.content-hidden}
 
 ## State-space models - postfire {.smaller background-color="#33431e"}
 
@@ -455,6 +456,8 @@ The process model ("previous time" only) represents negative exponential growth,
 ![](img/statespace_Slingsby2023.png)
 
 from [Slingsby et al. 2023](http://dx.doi.org/10.1111/2041-210x.14046)
+
+:::
 
 ## State-space models - uses {background-color="#33431e"}
 
