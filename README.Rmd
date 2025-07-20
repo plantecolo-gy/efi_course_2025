@@ -1,0 +1,29 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Near-term ecological forecasting course 2025
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+This repo contains contents of the ecological forecasting short course run by the [Ecoforecast Africa](https://ecoforecast.africa/) chapter of the [Ecological Forecasting Initiative](https://ecoforecast.org/) in Cape Town 21-25th July 2025. The goal of the course is to equip participants with the ability to generate a forecast from a simple model that makes use of more than one data stream. You should be able to categorize and estimate the uncertainties in the model, propagate this uncertainty into the forecast, and assess the performance of the model. You should be able to assess and critique forecast data products and scientific publications about ecological forecasts, and understand how such forecasts can be used to inform decision making.
+
+The full syllabus with timetable, setup instructions etc is available [here](https://docs.google.com/document/d/1C3eUnVJmV5t_K2vtE4hUzEtpTpfLsxjShI_PFMeBPOc/edit?usp=sharing). All lectures will be made available in the `lectures` folder of this repository.
+
+The course includes hands-on activities, which can be accessed [here](https://github.com/EcoForecast/EF_Activities). Participants will also partake in group projects based on one of the following themes (see links for separate git repositories for each project):
+
+- [Predicting stream flow and flood events in the Jonkershoek catchments](https://github.com/ecoforecast-africa/streamflow_jonkershoek)
+- [Predicting carbon and water fluxes from eddy-covariance](https://github.com/ecoforecast-africa/flux_jonkershoek)
+- [Predicting waterbird population abundance from count data](https://github.com/ecoforecast-africa/BIRDIE_abundance)
+
+

@@ -144,9 +144,11 @@ In this case we may want to model the true state as a latent variable, and model
 
 <br/>
 
-E.g. specifying the **data model** to be a normal distribution around the mean ($\mu$), as we did in the post-fire recovery model:     $NDVI_{i,t}\sim \mathit{N}(\mu_{i,t},\frac{1}{\sqrt{\tau}}) \\$
+E.g. if we were modelling NDVI (normalised difference vegetation index) from satellite we could specify the **data model** as a normal distribution around the mean ($\mu$):     
 
-In this case $\mu$ is the latent variable (estimate of the "true state").
+$NDVI_{i,t}\sim \mathit{N}(\mu_{i,t},\frac{1}{\sqrt{\tau}}) \\$
+
+Here $\mu$ is the latent variable (estimate of the "true state").
 
 ::: 
 ::::
@@ -389,7 +391,7 @@ ggplot(dat, aes(y = Density, x = state)) +
 
 ```
 
-Often, there's no observation for "next time", and the model reduces to...
+Usually, there's no observation for "next time", and the model reduces to...
 
 ## State-space models - example {.smaller background-color="#33431e"}
 
