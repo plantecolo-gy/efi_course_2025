@@ -436,7 +436,70 @@ In this dummy model the forecast is almost exactly the same as the previous time
 :::
 ::::
 
-:::{.content-hidden}
+
+## A more interesting example? {.smaller background-color="#33431e"}
+
+```{r fynbos, echo=FALSE, fig.cap = "", fig.width=3, fig.align = 'center', out.width="80%"}
+knitr::include_graphics("img/CFR_Seasonality.gif")
+```
+
+Time-series of the Normalised Difference Vegetation Index (NDVI ~ vegetation "greenness" measured from the MODIS satellites) to look at vegetation recovery with time since fire in Fynbos.
+
+## State-space models - postfire {.smaller background-color="#33431e"}
+
+```{r postfire_negexp, echo=FALSE, fig.cap = "", fig.width=3, fig.align = 'center', out.width="50%"}
+knitr::include_graphics("img/postfire_negexp.png")
+```
+
+A typical post-fire recovery curve is a negative exponential, where the vegetation greenness (NDVI) increases rapidly after fire, but then slows down as it approaches a maximum value.
+
+\begin{gather}
+  \text{NDVI}_{i,t}=\alpha_i+\gamma_i\Big(1-e^{-\frac{age_{i,t}}{\lambda_i}}\Big)
+\end{gather}
+
+## State-space models - postfire {.smaller background-color="#33431e"}
+
+```{r postfire_negexp_seasonality, echo=FALSE, fig.cap = "", fig.width=3, fig.align = 'center', out.width="40%"}
+knitr::include_graphics("img/postfire_negexp_seasonality.png")
+```
+
+We can also account for seasonality by adding a sine term
+
+\begin{gather}
+  \text{NDVI}_{i,t}=\alpha_i+\gamma_i\Big(1-e^{-\frac{age_{i,t}}{\lambda_i}}\Big)+
+      A_i\text{sin}\Big(2\pi\times\text{age}_{i,t}+\Big[\phi+\frac{\pi}{6}(m_{i,t}-1)\Big]\Big)
+\end{gather}
+
+## A quick aside on the parameters {.smaller background-color="#c2c190"}
+
+\begin{gather}
+  \text{NDVI}_{i,t}=\alpha_i+\gamma_i\Big(1-e^{-\frac{age_{i,t}}{\lambda_i}}\Big)+
+      A_i\text{sin}\Big(2\pi\times\text{age}_{i,t}+\Big[\phi+\frac{\pi}{6}(m_{i,t}-1)\Big]\Big)
+\end{gather}
+
+::: columns
+
+::: {.column width="50%"}
+
+```{r}
+knitr::include_graphics("img/postfire_negexp_seasonality.png")
+```
+
+:::
+
+::: {.column width="45%"}
+
+-   $\alpha$ is the NDVI at time 0 
+    - i.e. directly after the fire
+-   $\gamma$ is the maximum *increase* in NDVI
+    -   i.e. the maximum average NDVI reached by the curve is $\alpha + \gamma$
+-   $\lambda$ is the rate of increase in NDVI
+-   $A$ is the amplitude of the sine term
+-   $\phi$ adjusts the timing of the sine term based on the month the fire occurred
+-   $m$ is the month that the fire occurred
+
+:::
+:::
 
 ## State-space models - postfire {.smaller background-color="#33431e"}
 
@@ -459,7 +522,6 @@ The process model ("previous time" only) represents negative exponential growth,
 
 from [Slingsby et al. 2023](http://dx.doi.org/10.1111/2041-210x.14046)
 
-:::
 
 ## State-space models - uses {background-color="#33431e"}
 
