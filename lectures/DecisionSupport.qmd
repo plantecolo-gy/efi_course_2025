@@ -1,0 +1,161 @@
+---
+title: ""
+author: ""
+format: 
+  revealjs:
+    theme: dark
+    slide-number: true
+    self-contained: true
+html-math-method: mathjax
+bibliography: book.bib
+---
+
+# Projections and Decision Support {background-color="#33431e"}
+
+Jasper Slingsby
+
+
+## Decision Support {background-color="#33431e"}
+
+<br/>
+
+This is probably the hardest part of the whole ecological forecasting business... people!
+
+<br/>
+
+It is also a huge topic and not one I can cover in half a lecture. Here I just touch on a few hints and difficulties.
+
+
+## Decision Support {.smaller background-color="#33431e"}
+
+<br/>
+
+First and foremost, ***the decision at hand may not be amenable to a quantitative approach***.
+
+  - Ecological forecasting requires a ***clearly defined*** information need with a ***measurable*** (and modelable) state variable, framed within one or multiple ***decision alternatives*** (scenarios). 
+  - There's also the risk of ***external factors making the forecasts unreliable***, especially if they are not controlled by the decision maker and/or their probability is unknown (e.g. fire, pandemics, etc). 
+
+
+
+## Decision Support {.smaller background-color="#33431e"}
+
+<br/>
+
+These external factors are where developing ***scenarios with different boundary conditions can be very useful***. 
+
+  - e.g. scenarios with and without a fire, or different future climate states under alternative development pathways, etc. 
+  - Scenarios are often *"what if"* statements designed to address major sources of uncertainty that make it near-impossible to make accurate predictions with a single forecast.
+
+
+
+## Decision Support {.smaller background-color="#33431e"}
+
+<br/>
+
+> It's perhaps useful to note the distinction between ***predictions _versus_ projections***:
+
+>  - _***predictions*** are statements about the probability of the occurrence of events or the state of variables in the future ***based on what we currently know***_
+>  - _***projections*** are statements about the probability of the occurrence of events or the state of variables in the future ***given specific scenarios with clear boundary conditions***_
+
+
+## Decision Support {.smaller background-color="#33431e"}
+
+<br/>
+
+### In an ideal world...
+
+You'll be working with an organized team that is a well-oiled machine at implementing ***Adaptive Management*** and ***Structured Decision Making*** and you can naturally slot into their workflow.
+
+The advantages of Adaptive Management and Structured Decision Making are that they are founded on the concept of ***iterative learning cycles***, which they have in common with the ecological forecasting cycle and the scientific method.
+
+
+## Decision Support {.smaller background-color="#33431e"}
+
+```{r dietze2018F1b, echo=FALSE, fig.cap = "Conceptual relationships between iterative ecological forecasting, adaptive decision-making, adaptive monitoring, and the scientific method cycles [@Dietze2018].", fig.width=3, fig.align = 'center'}
+knitr::include_graphics("img/dietze2018_F1.jpg")
+```
+
+<br>
+
+You're already familiar with how the iterative ecological forecast cycle integrates with the Adaptive Management Cycle...
+
+
+## Decision Support {.smaller background-color="#33431e"}
+
+<br/>
+
+The beauty for the forecaster in this scenario is that **a lot of the work is already done**. 
+
+::: {.incremental}
+
+- The decision alternatives (scenarios) have been well framed.
+- The performance measures, state variables of interest and associated covariates mostly identified. 
+- Iterations of the learning cycle may even have already begun (through the Adaptive Management Cycle) and all you need do is ***develop the existing qualitative model into something more quantitative*** as more data and understanding are accumulated. 
+
+:::
+
+
+## Structured Decision Making {.smaller background-color="#33431e"}
+
+::: columns
+
+::: {.column width="40%"}
+
+<br/>
+
+```{r structureddecisions2, echo=FALSE, fig.cap = "The Structured Decision Making Cycle *sensu* @Gregory2012.", fig.width=3, fig.align = 'center', out.width='100%'}
+knitr::include_graphics("img/structureddecisions.png")
+```
+
+:::
+
+::: {.column width="60%"}
+
+Focused on the process of ***coming to a decision***, not the process of management, but very useful in the first iteration of the Adaptive Management Cycle. 
+
+<br/>
+
+::: {.fragment}
+
+It is valuable when there are many stakeholders with ***disparate interests***. 
+
+  - ***decisions are ultimately about values*** and often require evaluating trade-offs among properties with ***incomparable units*** - e.g. people housed/fed/watered vs species saved from extinction... 
+  - this can be a highly emotive space, and greatly benefits from a structured facilitation process
+
+:::    
+:::
+:::
+
+
+## Structured Decision Making {.smaller background-color="#33431e"}
+
+::: columns
+
+::: {.column width="40%"}
+
+<br/>
+
+```{r structureddecisions, echo=FALSE, fig.cap = "The Structured Decision Making Cycle *sensu* @Gregory2012.", fig.width=3, fig.align = 'center', out.width='100%'}
+knitr::include_graphics("img/structureddecisions.png")
+```
+
+:::
+
+::: {.column width="60%"}
+
+It tries to bring ***all issues and values to light*** to be considered in a transparent framework where trade-offs can be identified and considered.
+
+  - you can't make the right choice if it isn't on the table
+
+It ***directly addresses the social, political or cognitive biases*** that marginalise some values or alternatives. 
+
+::: {.fragment}
+
+Many decisions pit people's immediate needs (water, housing, etc) against the environment. We'd rather ignore the fact that choosing one is choosing against the other, but ***if we're not transparent about this we're not going to learn from our decisions and improve them in the next iteration.***
+
+:::
+:::
+:::
+
+
+## References {.smaller background-color="#33431e"}
