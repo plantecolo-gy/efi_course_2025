@@ -10,7 +10,7 @@ html-math-method: mathjax
 bibliography: book.bib
 ---
 
-# Latent variables and state-space models {background-color="#33431e"}
+# State-space models {background-color="#33431e"}
 
 Jasper Slingsby
 
@@ -436,13 +436,85 @@ In this dummy model the forecast is almost exactly the same as the previous time
 :::
 ::::
 
-:::{.content-hidden}
+
+## A more interesting example? {.smaller background-color="#33431e"}
+
+```{r fynbos, echo=FALSE, fig.cap = "", fig.width=3, fig.align = 'center', out.width="80%"}
+knitr::include_graphics("img/CFR_Seasonality.gif")
+```
+
+Time-series of the Normalised Difference Vegetation Index (NDVI ~ vegetation "greenness" measured from the MODIS satellites) to look at vegetation recovery with time since fire in Fynbos.
+
+## State-space models - postfire {.smaller background-color="#33431e"}
+
+```{r postfire_nocurve, echo=FALSE, fig.cap = "", fig.width=3, fig.align = 'center', out.width="50%"}
+knitr::include_graphics("img/postfire_nocurve.png")
+```
+
+NDVI in Fynbos does not follow a random walk, but rather a curve that increases rapidly after fire, then slows down as it approaches a maximum value.
+
+
+## State-space models - postfire {.smaller background-color="#33431e"}
+
+```{r postfire_negexp, echo=FALSE, fig.cap = "", fig.width=3, fig.align = 'center', out.width="50%"}
+knitr::include_graphics("img/postfire_negexp.png")
+```
+
+We can model the post-fire recovery curve is an intercept (greeness immediately after fire) plus a negative exponential, where the vegetation greenness (NDVI) increases rapidly after fire, but then slows down as it approaches a maximum value.
+
+\begin{gather}
+  \text{NDVI}_{i,t}=\alpha_i+\gamma_i\Big(1-e^{-\frac{age_{i,t}}{\lambda_i}}\Big)
+\end{gather}
+
+## State-space models - postfire {.smaller background-color="#33431e"}
+
+```{r postfire_negexp_seasonality, echo=FALSE, fig.cap = "", fig.width=3, fig.align = 'center', out.width="40%"}
+knitr::include_graphics("img/postfire_negexp_seasonality.png")
+```
+
+We can also account for seasonality by adding a sine term
+
+\begin{gather}
+  \text{NDVI}_{i,t}=\alpha_i+\gamma_i\Big(1-e^{-\frac{age_{i,t}}{\lambda_i}}\Big)+
+      A_i\text{sin}\Big(2\pi\times\text{age}_{i,t}+\Big[\phi+\frac{\pi}{6}(m_{i,t}-1)\Big]\Big)
+\end{gather}
+
+## A quick aside on the parameters {.smaller background-color="#c2c190"}
+
+\begin{gather}
+  \text{NDVI}_{i,t}=\alpha_i+\gamma_i\Big(1-e^{-\frac{age_{i,t}}{\lambda_i}}\Big)+
+      A_i\text{sin}\Big(2\pi\times\text{age}_{i,t}+\Big[\phi+\frac{\pi}{6}(m_{i,t}-1)\Big]\Big)
+\end{gather}
+
+::: columns
+
+::: {.column width="50%"}
+
+```{r}
+knitr::include_graphics("img/postfire_negexp_seasonality.png")
+```
+
+:::
+
+::: {.column width="45%"}
+
+-   $\alpha$ is the NDVI at time 0 
+    - i.e. directly after the fire
+-   $\gamma$ is the maximum *increase* in NDVI
+    -   i.e. the maximum average NDVI reached by the curve is $\alpha + \gamma$
+-   $\lambda$ is the rate of increase in NDVI
+-   $A$ is the amplitude of the sine term
+-   $\phi$ adjusts the timing of the sine term based on the month the fire occurred
+-   $m$ is the month that the fire occurred
+
+:::
+:::
 
 ## State-space models - postfire {.smaller background-color="#33431e"}
 
 Our postfire recovery example could use a state update equation with process model:
 
-$$x_{i,t} = \underbrace{(x_{i,t-1} + x_{i,t-1}\lambda_i(1-\frac{x_{i,t-1}}{\gamma_i})) (1-z_{i,t-1})}_\text{negative exponential*} + \underbrace{z_{i,t-1}\alpha_i}_\text{postfire greeness*} +  \underbrace{A_i\sin(v_t+\phi_i)}_\text{seasonality} +  \epsilon_{i,t}$$
+$$x_{i,t} = \underbrace{(x_{i,t-1} + x_{i,t-1}\lambda_i(1-\frac{x_{i,t-1}}{\gamma_i}))}_\text{negative exponential} \underbrace{(1-z_{i,t-1})}_\text{fire occurrence} + \underbrace{z_{i,t-1}\alpha_i}_\text{postfire greeness} +  \underbrace{A_i\sin(v_t+\phi_i)}_\text{seasonality} +  \epsilon_{i,t}$$
 and data model (as before):
 
 $$NDVI_{i,t} \sim \mathit{N}(x_{i,t},\sigma_o^{2})$$
@@ -459,7 +531,6 @@ The process model ("previous time" only) represents negative exponential growth,
 
 from [Slingsby et al. 2023](http://dx.doi.org/10.1111/2041-210x.14046)
 
-:::
 
 ## State-space models - uses {background-color="#33431e"}
 
@@ -475,12 +546,12 @@ They can be used for almost anything where the future state of a system depends 
 
 ## State-space models - uses {background-color="#33431e"}
 
-For time-series of discrete states variables (i.e. categorical response) they are also referred to as _Hidden Markov models_
+Also referred to as _Hidden Markov models_
 
 - "hidden" refers to the latent variable(s) 
 - "Markov" refers to their recursive nature,  with the next state in time a function of the current state
 
-When extended to spatial or space-time models they are called _Markov random fields_
+When extended to spatial or space-time models they are sometimes called _Markov random fields_
 
 
 ## References {.smaller background-color="#33431e"}

@@ -77,7 +77,7 @@ knitr::include_graphics("img/dietze2018_F1.jpg")
 
 <br>
 
-You're already familiar with how the iterative ecological forecast cycle integrates with the Adaptive Management Cycle...
+The iterative ecological forecast cycle integrates nicely with the Adaptive Management Cycle...
 
 
 ## Decision Support {.smaller background-color="#33431e"}
