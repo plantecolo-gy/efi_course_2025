@@ -1,0 +1,557 @@
+---
+title: "Bayes Primer"
+subtitle: "Ecological Forecasting Workshop, Cape Town, July 2025"
+author: "Murray Christian"
+format: 
+  revealjs:
+    slide-number: true
+    self-contained: true
+---
+
+## Overview
+
+::: incremental
+
+1. Why Bayes?
+
+2. Probability: joint, marginal and conditional
+
+3. Bayes' Theorem: prior, likelihood and posterior
+
+4. Bayesian inference: a simple example
+
+5. Bayesian workhorse: Markov Chain Monte Carlo
+
+:::
+
+## Why Bayes? 
+
+Several attractive features of Bayesian inference
+
+::: incremental
+
+- flexibility: complex models can be specified easily
+
+- intuitive: probability statements about parameters are legitimate
+
+- uncertainty: quantified robustly, easily propagated
+
+- iterative: estimates naturally updated given new data 
+
+- conceptual simplicity: $$ f(\theta|y) \propto f(y|\theta)f(\theta) $$
+
+:::
+
+# Probability
+
+## Probability distributions {.smaller}
+
+Assume a penguin, and assume it will be alive and of breeding age next year. 
+
+. . .
+
+It may
+
+-   choose to breed or not, and
+
+-   choose one of colonies A, B or C as home.
+
+. . .
+
+We might be interested in the probability of it
+
+::: incremental
+
+i. breeding and being at colony A?
+
+ii. breeding at all? being at colony A irrespective of breeding?
+
+iii. breeding, if we know (or assume) it will be at colony A?
+
+:::
+
+. . .
+
+Different queries require different distributions, here *joint*, *marginal* and *conditional distributions*, respectively.
+
+## Joint distribution {.smaller}
+
+Next year's *breeding status* and *colony* can each be described by a random variable:
+
+. . .
+
+::: columns
+::: {#vcenter .column width="50%"}
+$$
+  X = \left\{
+  \begin{align}
+  1 & \hspace{5pt} \mbox{ if breeds } \\
+  0 & \hspace{5pt} \mbox{ if doesn't breed }
+  \end{align} \right.
+$$
+:::
+
+::: {.column width="50%"}
+$$
+  Y = \left\{
+  \begin{align}
+  1 & \hspace{5pt} \mbox{ if resides at colony A } \\
+  2 & \hspace{5pt} \mbox{ if resides at colony B } \\
+  3 & \hspace{5pt} \mbox{ if resides at colony C }
+  \end{align} \right.
+$$
+:::
+:::
+
+. . .
+
+ A **joint distribution** for $X$ and $Y$ specifies $\text{Pr}(X=x,Y=y)$ for all     pairs $(x,y)$.
+
+. . .
+
+For example,
+
+|           | Y = 1 | Y = 2 | Y = 3 |
+|-----------|-------|-------|-------|
+| **X = 0** | 0.15  | 0.05  | 0.2   |
+| **X = 1** | 0.3   | 0.1   | 0.2   |
+
+: {tbl-colwidths="\[25,25,25,25\]"}
+
+. . .
+
+So $\text{Pr}(X = 1, Y = 2) = 0.1$ is the probability of breeding at colony B, *etc*.
+
+## Marginal distributions {.smaller}
+
+The joint distribution for $X$ and $Y$ implies a distribution for each variable on it's own, called the **marginal distribution**.
+
+. . .
+
+For example, the marginal for $X$ is given by two values $\text{Pr}(X=x)$ for $x=0,1$.
+
+. . .
+
+These are obtained by "summing out" the other variable, for example
+
+$$
+\text{Pr}(X = x)  = \text{Pr}(X = x, Y = 1)  +  \text{Pr}(X = x, Y = 2) + \text{Pr}(X = x, Y = 3).
+$$
+
+
+. . .
+
+The marginal distributions live "on the margins" of the joint
+
+|           | Y = 1 | Y = 2 | Y = 3 |     |
+|-----------|-------|-------|-------|-----|
+| **X = 0** | 0.15  | 0.05  | 0.2   | 0.4 |
+| **X = 1** | 0.3   | 0.1   | 0.2   | 0.6 |
+|  | 0.45  | 0.15  | 0.4   |     |
+
+: {tbl-colwidths="\[20,20,20,20\]"}
+
+## Joint and marginal: continuous case {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%" .incremental}
+
+- In our penguin example, $X$ and $Y$ are discrete. 
+
+- For continuous $X$ and $Y$, the joint and marginal distributions are determined by *probability density functions*.
+   
+   - joint density $f(x,y)$, 
+   
+   - marginal densities are obtained by "integrating out" the other variable(s) 
+   
+   - for example, $$f(y) = \int f(x,y)dx $$ 
+   
+:::
+
+::::
+
+. . .
+
+![](images/joint_marginal_continuous.png){.absolute right=-50 top=100 height=500 width=500}
+
+## Conditional distributions {.smaller}
+
+Conditional distributions arise when we know (or assume) some extra information.
+
+:::: {.columns}
+
+::: {.column width="48%" .incremental}
+
+- What are the probabilities the penguin does/doesn't breed if it goes to colony B? 
+
+-
+|           | Y = 1                            | Y = 2 | Y = 3                           |
+|-------------|-----------------------|-------------|-----------------------|
+| **X = 0** | [0.15]{style="color:lightgray;"} | 0.05  | [0.2]{style="color:lightgray;"} |
+| **X = 1** | [0.3]{style="color:lightgray;"}  | 0.1   | [0.2]{style="color:lightgray;"} |
+: {tbl-colwidths="\[25,25,25,25\]"}
+
+- So, given colony B ($Y=2$), breeding $(X=1)$ is twice as likely as not.
+
+
+
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%" .incremental}
+
+- Intuitively, probabilities should be $2/3$ breeds and $1/3$ doesn't breed.
+
+- How do we get $2/3$ and $1/3$ from $0.1$ and $0.05$?
+
+- Normalise: divide $0.1$ and $0.05$ by their sum
+$$
+\frac{2}{3} = \frac{0.1}{0.1 + 0.05} \hspace{5pt} \text{ & } \hspace{5pt} \frac{1}{3} = \frac{0.05}{0.1 + 0.05}
+$$
+
+:::
+
+::::
+
+. . .
+
+The *conditional distribution is joint divided by marginal*:
+
+$$
+\text{Pr}(X=x|Y=2) = \frac{\text{Pr}(X=x, Y=2)}{\text{Pr}(Y=2)} \hspace{15pt} \text{ for } x = 0, 1.
+$$
+
+
+
+
+## Conditional distributions {.smaller}
+
+In general, conditional distributions are "joint divided by marginal". 
+
+:::: {.columns}
+
+::: {.column width="50%" .incremental}
+
+- In the continuous setting this applies to the densities.
+
+-
+$$
+f(x|y) = \frac{f(x,y)}{f(y)} \hspace{5pt} \text{ and } \hspace{5pt} f(y|x) = \frac{f(x,y)}{f(x)}
+$$
+- Geometrically, conditional densities are "rescaled slices" of the joint.
+
+  - e.g $f(y|x=-2)$ and $f(y|x=2)$
+
+:::
+
+::::
+
+. . .
+
+![](images/joint_continuous.png){.absolute right=-50 top=150 height=500 width=500}
+
+
+
+## Conditional probability caution {.smaller}
+
+:::: {.columns}
+
+::: {.column width="55%" .incremental}
+
+- ambiguity in language: consider "probability of breeding at colony A"
+
+  - "probability of breeding *given* that it's at colony A" 
+  
+  - "probability of breeding *and* doing so at colony A"
+  
+- What's being modelled with $f(x,y)$ vs. $f(x|y)$
+
+  - $f(x,y)$: both $X,Y$ are modelled in the sense that there are probabilities associated with both 
+  
+  - $f(x|y)$: only $X$ is being modelled, $Y$ is assumed fixed with value $y$. 
+  
+- conditional probability is easily misunderstood
+  
+:::
+
+::::
+
+. . .
+
+![](images/sharksquito_full.png){.absolute top=80 right=-90 height="80%"} 
+
+::: {.footer}
+Thanks Maryam.
+:::
+
+# Bayes' Theorem
+
+## Bayes' Theorem {.smaller}
+
+Foundation of Bayesian statistics, used to infer parameters $\theta$ from data $y$:
+
+$$
+f(\theta|y) = \frac{f(y|\theta)f(\theta)}{f(y)},
+$$
+
+::: incremental
+
+-  **prior distribution** $f(\theta)$  represents knowledge of parameters before seeing data
+
+-  **likelihood**  $f(y|\theta)$ probability of data given parameters (a function of $\theta$ for fixed data $y$)
+
+-  **posterior distribution** $f(\theta|y)$ updated knowledge of parameters given observed data
+
+- for computing the posterior, the marginal probability of the data $f(y)$ can be ignored
+
+:::
+
+. . .
+
+***Posterior is proportional to likelihood times prior***
+$$
+f(\theta|y) \propto f(y|\theta)f(\theta)
+$$
+
+## Bayes' Theorem: proof {.smaller}
+
+Bayes' Theorem is a simple consequence of the definition of conditional probability:
+
+$$
+f(\theta|y) = \frac{f(\theta, y)}{f(y)} \hspace{10pt} \text{ and } \hspace{10pt} f(y|\theta) = \frac{f(\theta, y)}{f(\theta)},
+$$
+
+. . .
+
+therefore
+
+$$
+f(\theta, y) = f(\theta|y)f(y) \hspace{10pt} \text{ and } \hspace{10pt} f(\theta, y) = f(y|\theta)f(\theta), 
+$$
+
+. . .
+
+so
+$$
+f(\theta|y)f(y) = f(y|\theta)f(\theta),
+$$
+
+. . .
+
+hence
+
+$$
+f(\theta|y) = \frac{f(y|\theta)f(\theta)}{f(y)}.
+$$
+
+
+
+# Bayesian inference: a simple example
+
+## Bayesian inference: a simple example {.smaller}
+::: footer
+Example from McElreath *Statistical Rethinking*
+:::
+
+What proportion of the Earth' surface is covered in water?
+
+. . .
+
+**First step**: define variables and set up probability model
+
+::: incremental
+
+- one parameter $\theta$, the proportion water, $0 < \theta < 1$
+
+- data are water/land status $y_1, \cdots, y_N$ of points randomly sampled from Earth, where 
+$$
+Y_i = \left\{
+  \begin{align}
+  1 & \hspace{5pt} \mbox{ if water } \\
+  0 & \hspace{5pt} \mbox{ if land }
+  \end{align} \right.
+$$
+:::
+
+. . .
+
+To specify the probability model for all variables $(Y_1,\cdots, Y_N, \theta)$ we choose a likelihood and a prior:
+
+$$
+\begin{align}
+Y_i & \sim \text{Bernoulli}(\theta) \hspace{10pt} \text{ for } \hspace{2pt} i = 1,\cdots, N \\
+\theta & \sim \text{Beta}(\alpha, \beta) \hspace{10pt}  \text{ for } \alpha = \beta = 2
+\end{align}
+$$
+
+## Bayesian inference: a simple example {.smaller .scrollable}
+::: footer
+Example from McElreath *Statistical Rethinking*
+:::
+
+What proportion of the world's surface is covered in water?
+
+**Second step**: using Bayes, condition on the observed data to get the posterior.
+
+. . .
+
+It turns out that the posterior is another Beta distribution, namely $$
+\theta \sim  \text{Beta}(y_* + \alpha, N - y_* + \beta)
+$$ where we've put all the data in a vector $y = (y_1, \cdots, y_N)$, and set
+$y_* = y_1 + \cdots + y_N$ for the total number of points over water.
+
+. . .
+
+For example, suppose we took $N = 10$ samples and observed $y_* = 9$ over water. With our $\text{Beta}(2,2)$ prior this gives a posterior
+$$
+\theta \sim \text{Beta}(11, 3),
+$$
+which has a mean of $11/14 \approx 0.79$.
+
+. . .
+
+***The posterior is the whole estimate in Bayes!*** Explain...
+
+## Bayesian inference: optional algebra  {.smaller .scrollable}
+
+Here's the math that lead us to the posterior (in case it helps).
+
+. . .
+
+The likelihood for one observation $y_i$ is the Bernoulli probability mass function
+$$
+f(y_i|\theta) = \theta^{y_i}(1 - \theta)^{(1 - y_i)} = \left\{
+  \begin{align}
+  \theta & \hspace{5pt} \mbox{ if } \hspace{5pt} y_i = 1 \\
+  1-\theta & \hspace{5pt} \mbox{ if } \hspace{5pt} y_i = 0.
+  \end{align} \right.
+$$
+
+. . .
+
+We're assuming they data are independent, so the likelihood for all observations is
+$$
+f(y_1, \cdots, y_N|\theta) = \prod_{i=1}^Nf(y_i|\theta) = \prod_{i=1}^N\theta^{y_i}(1-\theta)^{1-y_i} = \theta^{y_*}(1- \theta)^{N - y_*},
+$$ where $y_* = y_1 + \cdots + y_N$ is the total number of points over water.
+
+. . .
+
+The prior is a Beta density
+
+$$
+f(\theta) \propto \theta^{\alpha - 1}(1 - \theta)^{\beta - 1},
+$$ where I've dropped the normalising constant for the Beta distribution.
+
+. . .
+
+Therefore, we have
+
+$$
+\begin{align}
+f(\theta|y) & \propto f(y|\theta)f(\theta) \\
+& \propto \theta^{y_*}(1- \theta)^{N - y_*}  \cdot  \theta^{\alpha - 1}(1 - \theta)^{\beta - 1} \\
+& = \theta^{(y_* + \alpha)-1}(1 - \theta)^{(N - y_* + \beta)-1},
+\end{align}
+$$ which we recognise as the (unnormalised) density for a $\text{Beta}(y_* + \alpha, N - y_* + \beta)$!
+
+--- 
+
+Now take a look at the interactive graphic exploring prior, likelihood and
+posterior for the proportion water model. To do so, open `run_apps.R`, and follow the instructions there.
+
+## Bayesian inference: takeaways
+
+Lessons learnt:
+
+::: incremental
+
+- the posterior is a compromise between likelihood and prior
+
+- prior and likelihood are weighted by their certainty
+
+- prior's influence on posterior diminishes with increasing data (assuming non-degeneracy)
+
+:::
+
+. . .
+
+Things to note:
+
+::: incremental
+
+- the prior should **not** be constructed based on the data!  
+
+:::
+
+## Lessons repeated!  {.smaller}
+
+Here's an example that illustrates the lessons algebraically: normal-normal conjugacy when estimating a normal mean $\mu$ from sample $y = (y_1, \cdots, y_n)$ with normal prior on $\mu$.
+
+. . .
+
+$$
+\begin{align}
+Y_i & \sim \text{Normal}(\mu, \sigma^2_{data}) \hspace{10pt} \text{ for } \hspace{2pt} i = 1,\cdots, n \\
+\mu & \sim \text{Normal}(\mu_{prior}, \sigma^2_{prior}) \hspace{10pt}  \text{ for given prior mean and variance. }
+\end{align}
+$$
+
+. . .
+
+This is another case with analytic posterior. It's insightful to define precision
+
+$$
+\tau_{prior} = 1/\sigma^2_{prior} \hspace{5pt} \mbox{ and } \hspace{5pt} \tau_{data} = 1/\sigma^2_{data}
+$$
+
+. . .
+
+Then the posterior is
+$$
+\begin{align}
+\mu & \sim \text{Normal}(\mu_{post}, \tau_{post}) \hspace{10pt} \text{ where } \\
+\mu_{post} & = \left(\frac{n\tau_{data}}{n\tau_{data} + \tau_{prior}}\right) \bar{x} + \left(\frac{\tau_{prior}}{n\tau_{data} + \tau_{prior}}\right) \mu_{prior} \\
+\tau_{post} & = n\tau_{data} + \tau_{prior}
+\end{align}
+$$
+
+
+# Bayesian workhorse: Markov Chain Monte Carlo
+
+## A distribution from a sample {.smaller}
+
+In most models, we can't obtain the posterior analytically. Fortunately there is a powerful set of algorithms that draw *samples* from the posterior. Any distribution can be approximated by a sufficiently large sample from it. 
+
+. . .
+
+![](images/normal_small_sample.png){.absolute left=50 top=220 height=300 width=300}
+
+. . .
+
+
+![](images/normal_large_sample.png){.absolute right=50 top=220 height=300 width=300}
+
+## Markov Chain Monte Carlo {.smaller}
+
+Basic idea: construct a Markov chain, i.e. a sequence of draws $\theta^{(1)}, \theta^{(2)}, \theta^{(3)}, \cdots$  from a distribution, such that in the limit, they represent the distribution in a similar way to a random sample.
+
+. . .
+
+Look at Chi Feng's great interactive MCMC simulation (https://chi-feng.github.io/mcmc-demo/).
+
+. . .
+
+Theory says that if we draw enough samples, we will get an adequate picture of the posterior. MCMC diagnostics help us to know if we have drawn enough samples. 
+
+::: incremental
+
+- trace plots (looking for "hairy caterpillars")
+
+- effective sample sizes (sample from MCMC is not independent)
+
+- r-hats 
+
+:::
