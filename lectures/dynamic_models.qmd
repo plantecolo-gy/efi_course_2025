@@ -1,0 +1,224 @@
+---
+title: "Dynamic Models"
+subtitle: "Ecological Forecasting Workshop, Cape Town, July 2025"
+author: "Murray Christian"
+format: 
+  revealjs:
+    slide-number: true
+    self-contained: true
+---
+
+
+
+
+## What is a dynamic model? {.smaller}
+
+. . .
+
+Dynamic models describe a function implicitly by describing the *change* that governs it.
+
+. . .
+
+:::: {.columns}
+
+::: {.column width="45%" .incremental}
+Differential equations in continuous time
+
+- "differential equation": an equation containing an unknown function and its derivative(s), e.g.
+  
+-
+$$
+\frac{dN}{dt} = rN \hspace{5pt} \text{ or } \hspace{5pt} \frac{1}{N}\frac{dN}{dt} = r,
+$$
+for constant $r$.
+
+- "solving" differential equations means finding the unknown function analytically or numerically, e.g.
+  $$
+   N(t) = N_0e^{rt} \hspace{10pt} \text{ for } t \geq 0
+  $$
+:::
+
+::: {.column width="10%" .incremental}
+:::
+
+::: {.column width="45%" .incremental}
+Difference equations in discrete time
+
+- "difference equation": specifies a function at $t+1$ in terms of value at $t$ 
+- e.g. 
+  $$
+  N_{t+1} = N_t + rN_t = (1 + r)N_t
+  $$
+- or generally
+$$
+N_{t+1} = F(N_t)
+$$
+for some function $F$
+
+- numerical simulation of difference equations is straightforward
+
+:::
+
+::::
+
+## Population growth {.smaller}
+
+Two classic dynamic models describe different population dynamics
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+- Exponential growth 
+$$
+\frac{dN}{dt} = rN.
+$$
+
+
+- Logistics population model with density-dependent dynamics
+$$
+\frac{dN}{dt} = rN\left(1 - \frac{N}{K}\right),
+$$
+:::
+
+![](images/exp_logistic_growth.png){.absolute right=-50 top=110 height=450 width=500}
+
+::::
+
+. . .
+
+Per-capita rate of change $\frac{1}{N}\frac{dN}{dt}$ is very simple in both, but dynamics are highly non-linear.
+
+
+# Intuition building
+
+## Dynamic models in discrete time {.smaller}
+
+Let's start at the simplest possible dynamic models in discrete time
+
+
+$$
+y_{t+1} = y_t 
+$$
+
+. . .
+
+The only thing the dynamics depend on is the initial condition $y_1$:
+
+. . . 
+
+![](images/constant_dynamics.png){.absolute left=250 top=240 height=500 width=500}
+
+## Dynamic models in discrete time {.smaller}
+
+As an aside, things get a bit more interesting if we move from a deterministic to a stochastic model
+
+
+$$
+y_{t+1} = y_t + \epsilon_t, \hspace{10pt} \text{ where } \epsilon_t \sim \text{Normal}(0, \sigma^2)
+$$
+
+. . .
+
+The result is known as a random walk:
+
+![](images/random_walk_short.png){.absolute left=80 top=280 height=400 width=400}
+
+![](images/random_walk_long.png){.absolute right=80 top=280 height=400 width=400}
+
+## Dynamic models in discrete time {.smaller }
+
+Back to deterministic models, exponential growth/decline results from
+
+. . .
+
+$$
+y_{t+1} = \rho y_t \hspace{5pt} \text{ for } \rho > 0.
+$$
+
+:::: {.columns}
+
+
+::: {.column width="50%" .incremental}
+- Solve by iteration, 
+  - $y_2 = \rho y_1$, 
+  - $y_3 = \rho y_2 = \rho^2 y_1$,
+  - ...
+- So $$y_{t+1} = \rho^t y_1,$$ thus exponential growth ($\rho > 1$) or decline ($\rho < 1$).
+:::
+
+::::
+
+. . . 
+
+![](images/discrete_exponential_dynamics.png){.absolute right=50 top=200 height=500 width=500}
+
+## Dynamic models in discrete time {.smaller }
+
+Consider something slightly more complex:
+
+$$
+y_{t+1} = \beta + \rho y_t.
+$$
+
+. . .
+ 
+How can we understand this equation?
+
+:::: {.columns}
+
+::: {.column width="60%" .incremental}
+- if $\beta > 0$ and $\rho > 1$, exponential growth
+- long-run behaviour and equilibria
+  - if $\lim_{t \rightarrow \infty}y_t = l$ exists, $l = \beta/(1-\rho)$
+  - alternatively, subtract $y_t$ from both sides to get
+  $$ \Delta y_t = y_{t+1} - y_t = \beta + (\rho - 1) y_t $$
+  - equilibrium if $\Delta y_t=0$, at $l = \beta/(1-\rho)$
+- the equilibrium is only sensible if $\beta > 0$ and $0 < \rho < 1$.
+:::
+
+::::
+
+. . . 
+
+![](images/discrete_logistic_dynamics.png){.absolute right=-100 top=200 height=500 width=500}
+
+## Dynamic models in discrete time {.smaller }
+
+If we push things just one bit further, all hell breaks loose! 
+
+::: {.incremental}
+
+- exponential growth: $y_{t+1} = \rho y_t$ where $\rho = y_{t+1}/y_t$ is the *growth rate*
+
+- for density dependence, 
+
+  - $\rho = \rho(y_t)$, for example $\rho(y_t) = r\left(1 - \frac{y_t}{K}\right)$
+
+  - $$
+\rho(y_t) \approx \left\{
+  \begin{align}
+  r & \hspace{5pt} \mbox{ if } y_t << K \\
+  0 & \hspace{5pt} \mbox{ if } y_t \approx K.
+  \end{align} \right.
+$$
+
+- we arrive at a non-linear equation
+$$
+y_{t+1} = ry_t\left(1 - \frac{y_t}{K}\right)
+$$
+
+- we can remove $K$ by scaling, $x_t = y_t/K$, giving one parameter
+$$
+x_{t+1} = rx_t(1-x_t)
+$$
+:::
+
+## Dynamic models in discrete time {.smaller }
+
+The 'logistic map' $x_{t+1} = rx_t(1-x_t)$ has incredibly rich dynamics as $r$ varies! The dynamics at various value of $r$ are explored in the interactive `logistic_map` app, which you can run from `run_apps.R`.
+
+![](images/logistic_bifurcation_diagram.png){.absolute right=100 top=240 height=450 width=800}
+
+
+
