@@ -81,7 +81,7 @@ $$
 $$
 :::
 
-![](images/exp_logistic_growth.png){.absolute right=-50 top=110 height=450 width=500}
+![](img/exp_logistic_growth.png){.absolute right=-50 top=110 height=450 width=500}
 
 ::::
 
@@ -107,7 +107,7 @@ The only thing the dynamics depend on is the initial condition $y_1$:
 
 . . . 
 
-![](images/constant_dynamics.png){.absolute left=250 top=240 height=500 width=500}
+![](img/constant_dynamics.png){.absolute left=250 top=240 height=500 width=500}
 
 ## Dynamic models in discrete time {.smaller}
 
@@ -122,9 +122,9 @@ $$
 
 The result is known as a random walk:
 
-![](images/random_walk_short.png){.absolute left=80 top=280 height=400 width=400}
+![](img/random_walk_short.png){.absolute left=80 top=280 height=400 width=400}
 
-![](images/random_walk_long.png){.absolute right=80 top=280 height=400 width=400}
+![](img/random_walk_long.png){.absolute right=80 top=280 height=400 width=400}
 
 ## Dynamic models in discrete time {.smaller }
 
@@ -151,7 +151,7 @@ $$
 
 . . . 
 
-![](images/discrete_exponential_dynamics.png){.absolute right=50 top=200 height=500 width=500}
+![](img/discrete_exponential_dynamics.png){.absolute right=50 top=200 height=500 width=500}
 
 ## Dynamic models in discrete time {.smaller }
 
@@ -181,7 +181,7 @@ How can we understand this equation?
 
 . . . 
 
-![](images/discrete_logistic_dynamics.png){.absolute right=-100 top=200 height=500 width=500}
+![](img/discrete_logistic_dynamics.png){.absolute right=-100 top=200 height=500 width=500}
 
 ## Dynamic models in discrete time {.smaller }
 
@@ -218,7 +218,7 @@ $$
 
 The 'logistic map' $x_{t+1} = rx_t(1-x_t)$ has incredibly rich dynamics as $r$ varies! The dynamics at various value of $r$ are explored in the interactive `logistic_map` app, which you can run from `run_apps.R`.
 
-![](images/logistic_bifurcation_diagram.png){.absolute right=100 top=240 height=450 width=800}
+![](img/logistic_bifurcation_diagram.png){.absolute right=100 top=240 height=450 width=800}
 
 
 

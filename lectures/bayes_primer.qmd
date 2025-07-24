@@ -173,7 +173,7 @@ The marginal distributions live "on the margins" of the joint
 
 . . .
 
-![](images/joint_marginal_continuous.png){.absolute right=-50 top=100 height=500 width=500}
+![](img/joint_marginal_continuous.png){.absolute right=-50 top=100 height=500 width=500}
 
 ## Conditional distributions {.smaller}
 
@@ -251,7 +251,7 @@ $$
 
 . . .
 
-![](images/joint_continuous.png){.absolute right=-50 top=150 height=500 width=500}
+![](img/joint_continuous.png){.absolute right=-50 top=150 height=500 width=500}
 
 
 
@@ -281,7 +281,7 @@ $$
 
 . . .
 
-![](images/sharksquito_full.png){.absolute top=80 right=-90 height="80%"} 
+![](img/sharksquito_full.png){.absolute top=80 right=-90 height="80%"} 
 
 ::: {.footer}
 Thanks Maryam.
@@ -527,12 +527,12 @@ In most models, we can't obtain the posterior analytically. Fortunately there is
 
 . . .
 
-![](images/normal_small_sample.png){.absolute left=50 top=220 height=300 width=300}
+![](img/normal_small_sample.png){.absolute left=50 top=220 height=300 width=300}
 
 . . .
 
 
-![](images/normal_large_sample.png){.absolute right=50 top=220 height=300 width=300}
+![](img/normal_large_sample.png){.absolute right=50 top=220 height=300 width=300}
 
 ## Markov Chain Monte Carlo {.smaller}
 
